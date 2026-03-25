@@ -1,0 +1,111 @@
+Table organizations {
+  org_id    serial      [pk, increment]
+  orgname   varchar(500) [not null]
+  country   char(3)
+  town      varchar(100)
+}
+
+Table journals {
+  journal_id  serial       [pk, increment]
+  title       varchar(500) [not null]
+  issn        varchar(20)
+  publisher   varchar(500)
+  country     char(3)
+  town        varchar(100)
+  vak         boolean
+  rsci        boolean
+  wos         boolean
+  scopus      boolean
+  white_list  boolean
+  doaj        boolean
+}
+
+Table issues {
+  issue_id    serial      [pk, increment]
+  journal_id  integer     [not null, ref: > journals.journal_id]
+  year        smallint    [not null]
+  volume      smallint
+  number      varchar(20)
+  contnumber  integer
+}
+
+Table items {
+  item_id     integer     [pk]
+  issue_id    integer     [not null, ref: > issues.issue_id]
+  linkurl     text
+  genre       varchar(100)
+  type        varchar(100)
+  pages       varchar(30)
+  language    char(2)
+  cited       smallint
+  dateindexed date
+  doi         varchar(100)
+  edn         varchar(20)
+  grnti       varchar(20)
+  risc        boolean
+  corerisc    boolean
+  citation    text
+  supported   text
+}
+
+Table authors {
+  author_id           serial       [pk, increment]
+  elibrary_author_id  integer      [unique]
+  lastname            varchar(200) [not null]
+  initials            varchar(200)
+  email               varchar(200)
+}
+
+Table item_authors {
+  item_id      integer     [not null, ref: > items.item_id]
+  author_id    integer     [not null, ref: > authors.author_id]
+  num          smallint
+  aboutauthor  varchar(300)
+
+  indexes {
+    (item_id, author_id) [pk]
+  }
+}
+
+Table author_affiliations {
+  id         serial   [pk, increment]
+  item_id    integer  [not null, ref: > items.item_id]
+  author_id  integer  [not null, ref: > authors.author_id]
+  org_id     integer  [not null, ref: > organizations.org_id]
+  num        smallint
+}
+
+Table titles {
+  title_id    serial   [pk, increment]
+  item_id     integer  [not null, ref: > items.item_id]
+  lang        char(2)
+  title_text  text     [not null]
+}
+
+Table abstracts {
+  abstract_id    serial   [pk, increment]
+  item_id        integer  [not null, ref: > items.item_id]
+  lang           char(2)
+  abstract_text  text
+}
+
+Table keywords {
+  keyword_id    serial       [pk, increment]
+  item_id       integer      [not null, ref: > items.item_id]
+  lang          char(2)
+  keyword_text  varchar(300)
+}
+
+Table codes {
+  code_id     serial      [pk, increment]
+  item_id     integer     [not null, ref: > items.item_id]
+  code_type   varchar(50)
+  code_value  varchar(50)
+}
+
+Table references {
+  reference_id    serial   [pk, increment]
+  item_id         integer  [not null, ref: > items.item_id]
+  num             smallint
+  reference_text  text
+}
