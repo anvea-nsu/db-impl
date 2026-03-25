@@ -3,22 +3,28 @@ Table organizations {
   orgname   varchar(500) [not null]
   country   char(3)
   town      varchar(100)
+  // orgid
 }
 
 Table journals {
   journal_id  serial       [pk, increment]
   title       varchar(500) [not null]
   issn        varchar(20)
+  eissn       varchar(20)
   publisher   varchar(500)
   country     char(3)
   town        varchar(100)
   vak         boolean
   rsci        boolean
+  corerisc    boolean
   wos         boolean
   scopus      boolean
-  white_list  boolean
-  doaj        boolean
+  // сайт
+  // префикс DOI
+  // переводная версия (ссылка на другой журнал)
 }
+
+// добавить journal_titles
 
 Table issues {
   issue_id    serial      [pk, increment]
@@ -37,8 +43,6 @@ Table items {
   type        varchar(100)
   pages       varchar(30)
   language    char(2)
-  cited       smallint
-  dateindexed date
   doi         varchar(100)
   edn         varchar(20)
   grnti       varchar(20)
@@ -46,33 +50,42 @@ Table items {
   corerisc    boolean
   citation    text
   supported   text
+  // дата печати
+  // дата поступления в редакцию
+  // число авторов
+  // переводная версия (ссылка на другой item)
 }
 
 Table authors {
   author_id           serial       [pk, increment]
   elibrary_author_id  integer      [unique]
+  firstname           varchar(200)
+  middlename          varchar(200)
   lastname            varchar(200) [not null]
   initials            varchar(200)
   email               varchar(200)
+  // general_organization // сделать ссылку на организацию
 }
 
 Table item_authors {
-  item_id      integer     [not null, ref: > items.item_id]
-  author_id    integer     [not null, ref: > authors.author_id]
-  num          smallint
+  id        serial    [pk, increment]
+  item_id   integer   [not null, ref: > items.item_id]
+  author_id integer   [not null, ref: > authors.author_id]
+  num       smallint
   aboutauthor  varchar(300)
+  // кол-во аффиляций
 
   indexes {
-    (item_id, author_id) [pk]
+    (item_id, author_id) [unique]
   }
 }
 
 Table author_affiliations {
-  id         serial   [pk, increment]
-  item_id    integer  [not null, ref: > items.item_id]
-  author_id  integer  [not null, ref: > authors.author_id]
-  org_id     integer  [not null, ref: > organizations.org_id]
-  num        smallint
+  id             serial   [pk, increment]
+  item_author_id integer  [not null, ref: > item_authors.id]
+  org_id         integer  [not null, ref: > organizations.org_id]
+  num            smallint
+  // как автор сам указал аффиляцию (например один пишет НГУ, другой Новосибирский ...)
 }
 
 Table titles {
@@ -82,30 +95,67 @@ Table titles {
   title_text  text     [not null]
 }
 
-Table abstracts {
+Table abstracts { // delete
   abstract_id    serial   [pk, increment]
   item_id        integer  [not null, ref: > items.item_id]
   lang           char(2)
   abstract_text  text
 }
 
-Table keywords {
+Table keywords { // delete
   keyword_id    serial       [pk, increment]
   item_id       integer      [not null, ref: > items.item_id]
   lang          char(2)
   keyword_text  varchar(300)
 }
 
-Table codes {
+Table codes { // delete
   code_id     serial      [pk, increment]
   item_id     integer     [not null, ref: > items.item_id]
   code_type   varchar(50)
   code_value  varchar(50)
 }
 
-Table references {
+Table references { // убрать
   reference_id    serial   [pk, increment]
   item_id         integer  [not null, ref: > items.item_id]
   num             smallint
   reference_text  text
 }
+
+Table white_list_versions {
+  version_id   serial      [pk, increment]
+  version_name varchar(100) [not null]
+  published_at date
+  description  text
+}
+
+Table white_list_entries {
+  entry_id    serial   [pk, increment]
+  journal_id  integer  [not null, ref: > journals.journal_id]
+  version_id  integer  [not null, ref: > white_list_versions.version_id]
+  level       smallint
+  included_at date
+  excluded_at date
+
+  indexes {
+    (journal_id, version_id) [unique]
+  }
+}
+
+// добавить таблицу organization_names (org_id, name, type)
+
+// добавить таблицу author_names
+
+// добавить vak
+// rsci
+// corerisc
+// risc
+// wos
+// scopus
+// white_list
+// у каждой бд (имя, сайт, префикс квартиля)
+
+// у таблицы db @ journals (год, входит или нет, квартиль, if(float), процентиль(float))
+
+// добавить db @ authours (id в базе данных (text))
