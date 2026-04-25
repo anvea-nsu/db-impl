@@ -1,179 +1,231 @@
-  Table organizations {
-    org_id    serial       [pk, increment]
-    orgid     varchar(100)
-    orgname   varchar(500) [not null] // самое правильное название
-    country   char(3)
-    town      varchar(100)
+Table languages {
+  lang_id  char(2)      [pk]
+  name     varchar(100) [not null]
+}
+
+Table countries {
+  country_id  char(3)      [pk]
+  name        varchar(100) [not null]
+}
+
+Table cities {
+  city_id     serial       [pk, increment]
+  name        varchar(100) [not null]
+  country_id  char(3)      [ref: > countries.country_id]
+}
+
+Table organizations {
+  org_id     serial       [pk, increment]
+  orgname    varchar(500) [unique]
+  country_id char(3)      [ref: > countries.country_id]
+  city_id    integer      [ref: > cities.city_id]
+}
+
+Table organization_names {
+  id      serial       [pk, increment]
+  org_id  integer      [not null, ref: > organizations.org_id]
+  name    varchar(500) [not null]
+  lang    char(2)      [not null, ref: > languages.lang_id]
+  type    varchar(100)
+
+  indexes {
+    (org_id, name) [unique]
   }
+}
 
-  Table organization_names {
-    id      serial       [pk, increment]
-    org_id  integer      [not null, ref: > organizations.org_id]
-    name    varchar(500) [not null]
-    type    varchar(100)
+Table organizations_databases {
+  id         serial      [pk, increment]
+  org_id     integer     [not null, ref: > organizations.org_id]
+  db_id      integer     [not null, ref: > databases.db_id]
+  db_org_id  varchar(50) [not null]
+
+  indexes {
+    (org_id, db_id)      [unique]
+    (db_id, db_org_id)   [unique]
   }
+}
 
-  Table journals {
-    journal_id        serial       [pk, increment]
-    title             varchar(500) [not null]
-    issn              varchar(20)
-    eissn             varchar(20)
-    publisher         varchar(500)
-    country           char(3)
-    town              varchar(100)
-    website           varchar(500)
-    doi_prefix        varchar(100)
-    translated_journal_id integer  [ref: > journals.journal_id]
+Table journals {
+  journal_id            serial   [pk, increment]
+  title                 varchar(500) [not null]
+  issn                  varchar(20)  [unique]
+  eissn                 varchar(20)  [unique]
+  publisher_org_id      integer      [ref: > organizations.org_id]
+  lang                  char(2)      [ref: > languages.lang_id]
+  website               varchar(500)
+  doi_prefix            varchar(100) [unique]
+  translated_journal_id integer      [unique, ref: > journals.journal_id]
+}
+
+Table journal_titles {
+  title_id    serial   [pk, increment]
+  journal_id  integer  [not null, ref: > journals.journal_id]
+  lang        char(2)  [not null, ref: > languages.lang_id]
+  title_text  text     [not null]
+
+  indexes {
+    (journal_id, lang)       [unique]
+    (journal_id, title_text) [unique]
   }
+}
 
-  Table journal_titles {
-    title_id    serial   [pk, increment]
-    journal_id  integer  [not null, ref: > journals.journal_id]
-    lang        char(2)
-    title_text  text     [not null]
+Table issues {
+  issue_id    serial   [pk, increment]
+  journal_id  integer  [not null, ref: > journals.journal_id]
+  year        smallint [not null]
+  volume      smallint
+  number      varchar(20)
+  contnumber  integer
+
+  indexes {
+    (journal_id, year, volume, number) [unique]
   }
+}
 
-  Table issues {
-    issue_id    serial      [pk, increment]
-    journal_id  integer     [not null, ref: > journals.journal_id]
-    year        smallint    [not null]
-    volume      smallint
-    number      varchar(20)
-    contnumber  integer
+Table items {
+  item_id            serial       [pk, increment]
+  issue_id           integer      [not null, ref: > issues.issue_id]
+  title              text         [not null]
+  linkurl            text
+  genre              varchar(100)
+  type               varchar(100)
+  pages              varchar(30)
+  language           char(2)      [ref: > languages.lang_id]
+  doi                varchar(100) [unique]
+  edn                varchar(20)  [unique]
+  grnti              varchar(20)
+  risc               boolean
+  corerisc           boolean
+  citation           text         [unique]
+  supported          text
+  valid_support      boolean
+  project_number     smallint     [note: 'CHECK(project_number BETWEEN 1 AND 100)']
+  print_date         date
+  received_date      date
+  authors_count      smallint     [note: 'CHECK(authors_count > 0)']
+  translated_item_id integer      [unique, ref: > items.item_id]
+
+  indexes {
+    (issue_id, title) [unique]
   }
+}
 
-  Table items {
-    item_id             integer     [pk]
-    issue_id            integer     [not null, ref: > issues.issue_id]
-    linkurl             text
-    genre               varchar(100)
-    type                varchar(100)
-    pages               varchar(30)
-    language            char(2)
-    doi                 varchar(100)
-    edn                 varchar(20)
-    grnti               varchar(20)
-    risc                boolean
-    corerisc            boolean
-    citation            text
-    supported           text
-    print_date          date
-    received_date       date
-    authors_count       smallint
-    translated_item_id  integer     [ref: > items.item_id]
+Table item_databases {
+  id          serial      [pk, increment]
+  item_id     integer     [not null, ref: > items.item_id]
+  db_id       integer     [not null, ref: > databases.db_id]
+  db_item_id  varchar(50) [not null]
+
+  indexes {
+    (item_id, db_id)      [unique]
+    (db_id, db_item_id)   [unique]
   }
+}
 
-  Table authors {
-    author_id             serial       [pk, increment]
-    elibrary_author_id    integer      [unique]
-    firstname             varchar(200)
-    middlename            varchar(200)
-    lastname              varchar(200) [not null]
-    initials              varchar(200)
-    email                 varchar(200)
-    general_org_id        integer      [ref: > organizations.org_id]
+Table item_titles {
+  title_id    serial   [pk, increment]
+  item_id     integer  [not null, ref: > items.item_id]
+  lang        char(2)  [not null, ref: > languages.lang_id]
+  title_text  text     [not null]
+
+  indexes {
+    (item_id, lang) [unique]
   }
+}
 
-  Table author_names {
-    id          serial       [pk, increment]
-    author_id   integer      [not null, ref: > authors.author_id]
-    lang        char(2)      [not null]
-    firstname   varchar(200)
-    middlename  varchar(200)
-    lastname    varchar(200) [not null]
-    initials    varchar(10)
+Table authors {
+  author_id      serial       [pk, increment]
+  firstname      varchar(100)
+  middlename     varchar(100)
+  lastname       varchar(100) [not null]
+  initials       varchar(10)
+  email          varchar(200)
+  general_org_id integer      [ref: > organizations.org_id]
+}
+
+Table author_names {
+  id          serial   [pk, increment]
+  author_id   integer  [not null, ref: > authors.author_id]
+  lang        char(2)  [not null, ref: > languages.lang_id]
+  firstname   varchar(100)
+  middlename  varchar(100)
+  lastname    varchar(100) [not null]
+  initials    varchar(10)
+
+  indexes {
+    (author_id, lang) [unique]
   }
+}
 
-  Table item_authors {
-    id               serial    [pk, increment]
-    item_id          integer   [not null, ref: > items.item_id]
-    author_id        integer   [not null, ref: > authors.author_id]
-    num              smallint
-    aboutauthor      varchar(300)
-    affiliations_count smallint
+Table item_authors {
+  id                 serial   [pk, increment]
+  item_id            integer  [not null, ref: > items.item_id]
+  author_id          integer  [not null, ref: > authors.author_id]
+  num                smallint [note: 'CHECK(num > 0)']
+  aboutauthor        varchar(300)
+  affiliations_count smallint [note: 'CHECK(affiliations_count > 0)']
 
-    indexes {
-      (item_id, author_id) [unique]
-    }
+  indexes {
+    (item_id, author_id) [unique]
+    (item_id, num)       [unique]
   }
+}
 
-  Table author_affiliations {
-    id              serial   [pk, increment]
-    item_author_id  integer  [not null, ref: > item_authors.id]
-    org_id          integer  [not null, ref: > organizations.org_id]
-    num             smallint
-    affiliation_as_given varchar(500) // как автор сам указал аффиляцию
+Table author_affiliations {
+  id                   serial   [pk, increment]
+  item_author_id       integer  [not null, ref: > item_authors.id]
+  org_id               integer  [not null, ref: > organizations.org_id]
+  num                  smallint [note: 'CHECK(num > 0)']
+  affiliation_as_given varchar(500)
+
+  indexes {
+    (item_author_id, org_id) [unique]
+    (item_author_id, num)    [unique]
   }
+}
 
-  Table titles {
-    title_id    serial   [pk, increment]
-    item_id     integer  [not null, ref: > items.item_id]
-    lang        char(2)
-    title_text  text     [not null]
+Table databases {
+  db_id           serial       [pk, increment]
+  name            varchar(200) [not null, unique]
+  website         varchar(500) [unique]
+  quartile_prefix varchar(10)
+}
+
+Table journal_databases {
+  id          serial   [pk, increment]
+  journal_id  integer  [not null, ref: > journals.journal_id]
+  db_id       integer  [not null, ref: > databases.db_id]
+  year        smallint [not null]
+  is_included boolean  [not null]
+  quartile    smallint
+  if_value    float    [note: 'CHECK(if_value >= 0)']
+  percentile  float    [note: 'CHECK(percentile >= 0)']
+
+  indexes {
+    (journal_id, db_id, year) [unique]
   }
+}
 
-  Table databases {
-    db_id       serial       [pk, increment]
-    name        varchar(200) [not null] // vak, rsci, wos, scopus и т.д.
-    website     varchar(500)
-    quartile_prefix varchar(50)
+Table journal_database_ids {
+  id            serial      [pk, increment]
+  journal_id    integer     [not null, ref: > journals.journal_id]
+  db_id         integer     [not null, ref: > databases.db_id]
+  db_journal_id varchar(50) [not null]
+
+  indexes {
+    (journal_id, db_id)    [unique]
+    (db_id, db_journal_id) [unique]
   }
+}
 
-  Table journal_databases {
-    id          serial   [pk, increment]
-    journal_id  integer  [not null, ref: > journals.journal_id]
-    db_id       integer  [not null, ref: > databases.db_id]
-    year        smallint [not null]
-    is_included boolean  [not null]
-    quartile    smallint
-    if_value    float
-    percentile  float
+Table author_databases {
+  id           serial      [pk, increment]
+  author_id    integer     [not null, ref: > authors.author_id]
+  db_id        integer     [not null, ref: > databases.db_id]
+  db_author_id varchar(50) [not null]
 
-    indexes {
-      (journal_id, db_id, year) [unique]
-    }
+  indexes {
+    (author_id, db_id)     [unique]
+    (db_id, db_author_id)  [unique]
   }
-
-  Table journal_database_ids {
-    id            serial   [pk, increment]
-    journal_id    integer  [not null, ref: > journals.journal_id]
-    db_id         integer  [not null, ref: > databases.db_id]
-    db_journal_id integer  [not null] // id журнала в базе данных
-
-    indexes {
-      (journal_id, db_id) [unique]
-      (db_id, db_journal_id) [unique]
-    }
-  }
-
-  Table author_databases {
-    id          serial   [pk, increment]
-    author_id   integer  [not null, ref: > authors.author_id]
-    db_id       integer  [not null, ref: > databases.db_id]
-    db_author_id integer [not null]   // id автора в базе данных
-
-    indexes {
-      (author_id, db_id) [unique]
-      (db_id, db_author_id) [unique]
-    }
-  }
-
-  Table white_list_versions {
-    version_id   serial       [pk, increment]
-    version_name varchar(100) [not null]
-    published_at date
-    description  text
-  }
-
-  Table white_list_entries {
-    entry_id    serial   [pk, increment]
-    journal_id  integer  [not null, ref: > journals.journal_id]
-    version_id  integer  [not null, ref: > white_list_versions.version_id]
-    level       smallint
-    included_at date
-    excluded_at date
-
-    indexes {
-      (journal_id, version_id) [unique]
-    }
-  }
+}
