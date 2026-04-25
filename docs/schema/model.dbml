@@ -135,11 +135,11 @@ Table item_titles {
 
 Table authors {
   author_id      serial       [pk, increment]
-  firstname      varchar(100)
-  middlename     varchar(100)
-  lastname       varchar(100) [not null]
+  firstname      varchar(32)
+  middlename     varchar(32)
+  lastname       varchar(32) [not null]
   initials       varchar(10)
-  email          varchar(200)
+  email          varchar(320)
   general_org_id integer      [ref: > organizations.org_id]
 }
 
