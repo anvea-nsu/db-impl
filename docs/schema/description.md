@@ -20,18 +20,18 @@
 **Статьи**
 - [articles](#articles)
 - [article\_titles](#article_titles)
-- [article\_databases](#article_databases)
+- [articles\_databases](#articles_databases)
 
 **Авторы**
 - [authors](#authors)
 - [author\_names](#author_names)
-- [article\_authors](#article_authors)
+- [articles\_authors](#articles_authors)
 - [author\_affiliations](#author_affiliations)
 - [authors\_databases](#authors_databases)
 
 **Базы данных и индексирование**
 - [databases](#databases)
-- [journal\_databases](#journal_databases)
+- [journals\_databases](#journals_databases)
 - [journal\_database\_ids](#journal_database_ids)
 
 ## languages
@@ -187,7 +187,7 @@
 
 **Уникальность:** `(article_id, lang)`
 
-## article_databases
+## articles_databases
 
 Идентификаторы статьи во внешних библиографических базах данных (в т.ч. ID в РИНЦ).
 
@@ -230,7 +230,7 @@
 
 **Уникальность:** `(author_id, lang)`
 
-## article_authors
+## articles_authors
 
 Связь статей и авторов.
 
@@ -252,7 +252,7 @@
 | Колонка | Тип | Ограничения | Описание |
 |---|---|---|---|
 | `id` | SERIAL | PK | Внутренний ID записи |
-| `article_author_id` | INTEGER | NOT NULL, FK → [article_authors](#article_authors) | Ссылка на запись автора в статье |
+| `article_author_id` | INTEGER | NOT NULL, FK → [articles_authors](#articles_authors) | Ссылка на запись автора в статье |
 | `org_id` | INTEGER | NOT NULL, FK → [organizations](#organizations) | Ссылка на организацию |
 | `num` | SMALLINT | CHECK(> 0) | Порядковый номер аффилиации у автора |
 | `affiliation_as_given` | VARCHAR(500) | | Аффилиация в том виде, в каком она указана в оригинале статьи |
@@ -283,7 +283,7 @@
 | `website` | VARCHAR(500) | UNIQUE | Сайт базы данных |
 | `quartile_prefix` | VARCHAR(10) | | Префикс обозначения квартиля, напр. `Q`, `К` |
 
-## journal_databases
+## journals_databases
 
 Факт и параметры индексирования журнала в конкретной базе данных за конкретный год.
 
