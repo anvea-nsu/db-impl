@@ -9,9 +9,9 @@ Table countries {
 }
 
 Table cities {
-  city_id     serial       [pk, increment]
+  city_id     serial   [pk, increment]
   name        varchar(100) [not null]
-  country_id  char(3)      [ref: > countries.country_id]
+  country_id  char(3)  [ref: > countries.country_id]
 }
 
 Table organizations {
@@ -34,19 +34,19 @@ Table organization_names {
 }
 
 Table organizations_databases {
-  id         serial      [pk, increment]
-  org_id     integer     [not null, ref: > organizations.org_id]
-  db_id      integer     [not null, ref: > databases.db_id]
-  db_org_id  varchar(50) [not null]
+  id        serial      [pk, increment]
+  org_id    integer     [not null, ref: > organizations.org_id]
+  db_id     integer     [not null, ref: > databases.db_id]
+  db_org_id varchar(50) [not null]
 
   indexes {
-    (org_id, db_id)      [unique]
-    (db_id, db_org_id)   [unique]
+    (org_id, db_id)    [unique]
+    (db_id, db_org_id) [unique]
   }
 }
 
 Table journals {
-  journal_id            serial   [pk, increment]
+  journal_id            serial       [pk, increment]
   title                 varchar(500) [not null]
   issn                  varchar(20)  [unique]
   eissn                 varchar(20)  [unique]
@@ -82,8 +82,8 @@ Table issues {
   }
 }
 
-Table items {
-  item_id            serial       [pk, increment]
+Table articles {
+  article_id         serial       [pk, increment]
   issue_id           integer      [not null, ref: > issues.issue_id]
   title              text         [not null]
   linkurl            text
@@ -103,53 +103,53 @@ Table items {
   print_date         date
   received_date      date
   authors_count      smallint     [note: 'CHECK(authors_count > 0)']
-  translated_item_id integer      [unique, ref: > items.item_id]
+  translated_article_id integer   [unique, ref: > articles.article_id]
 
   indexes {
     (issue_id, title) [unique]
   }
 }
 
-Table item_databases {
-  id          serial      [pk, increment]
-  item_id     integer     [not null, ref: > items.item_id]
-  db_id       integer     [not null, ref: > databases.db_id]
-  db_item_id  varchar(50) [not null]
+Table article_databases {
+  id             serial      [pk, increment]
+  article_id     integer     [not null, ref: > articles.article_id]
+  db_id          integer     [not null, ref: > databases.db_id]
+  db_article_id  varchar(50) [not null]
 
   indexes {
-    (item_id, db_id)      [unique]
-    (db_id, db_item_id)   [unique]
+    (article_id, db_id)      [unique]
+    (db_id, db_article_id)   [unique]
   }
 }
 
-Table item_titles {
+Table article_titles {
   title_id    serial   [pk, increment]
-  item_id     integer  [not null, ref: > items.item_id]
+  article_id  integer  [not null, ref: > articles.article_id]
   lang        char(2)  [not null, ref: > languages.lang_id]
   title_text  text     [not null]
 
   indexes {
-    (item_id, lang) [unique]
+    (article_id, lang) [unique]
   }
 }
 
 Table authors {
-  author_id      serial       [pk, increment]
+  author_id      serial      [pk, increment]
   firstname      varchar(32)
   middlename     varchar(32)
   lastname       varchar(32) [not null]
   initials       varchar(10)
   email          varchar(320)
-  general_org_id integer      [ref: > organizations.org_id]
+  general_org_id integer     [ref: > organizations.org_id]
 }
 
 Table author_names {
   id          serial   [pk, increment]
   author_id   integer  [not null, ref: > authors.author_id]
   lang        char(2)  [not null, ref: > languages.lang_id]
-  firstname   varchar(100)
-  middlename  varchar(100)
-  lastname    varchar(100) [not null]
+  firstname   varchar(32)
+  middlename  varchar(32)
+  lastname    varchar(32) [not null]
   initials    varchar(10)
 
   indexes {
@@ -157,30 +157,30 @@ Table author_names {
   }
 }
 
-Table item_authors {
+Table article_authors {
   id                 serial   [pk, increment]
-  item_id            integer  [not null, ref: > items.item_id]
+  article_id         integer  [not null, ref: > articles.article_id]
   author_id          integer  [not null, ref: > authors.author_id]
   num                smallint [note: 'CHECK(num > 0)']
   aboutauthor        varchar(300)
   affiliations_count smallint [note: 'CHECK(affiliations_count > 0)']
 
   indexes {
-    (item_id, author_id) [unique]
-    (item_id, num)       [unique]
+    (article_id, author_id) [unique]
+    (article_id, num)       [unique]
   }
 }
 
 Table author_affiliations {
   id                   serial   [pk, increment]
-  item_author_id       integer  [not null, ref: > item_authors.id]
+  article_author_id    integer  [not null, ref: > article_authors.id]
   org_id               integer  [not null, ref: > organizations.org_id]
   num                  smallint [note: 'CHECK(num > 0)']
   affiliation_as_given varchar(500)
 
   indexes {
-    (item_author_id, org_id) [unique]
-    (item_author_id, num)    [unique]
+    (article_author_id, org_id) [unique]
+    (article_author_id, num)    [unique]
   }
 }
 
@@ -218,14 +218,14 @@ Table journal_database_ids {
   }
 }
 
-Table author_databases {
+Table authors_databases {
   id           serial      [pk, increment]
   author_id    integer     [not null, ref: > authors.author_id]
   db_id        integer     [not null, ref: > databases.db_id]
   db_author_id varchar(50) [not null]
 
   indexes {
-    (author_id, db_id)     [unique]
-    (db_id, db_author_id)  [unique]
+    (author_id, db_id)    [unique]
+    (db_id, db_author_id) [unique]
   }
 }
