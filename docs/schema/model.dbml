@@ -110,7 +110,7 @@ Table articles {
   }
 }
 
-Table article_databases {
+Table articles_databases {
   id             serial      [pk, increment]
   article_id     integer     [not null, ref: > articles.article_id]
   db_id          integer     [not null, ref: > databases.db_id]
@@ -157,7 +157,7 @@ Table author_names {
   }
 }
 
-Table article_authors {
+Table articles_authors {
   id                 serial   [pk, increment]
   article_id         integer  [not null, ref: > articles.article_id]
   author_id          integer  [not null, ref: > authors.author_id]
@@ -173,7 +173,7 @@ Table article_authors {
 
 Table author_affiliations {
   id                   serial   [pk, increment]
-  article_author_id    integer  [not null, ref: > article_authors.id]
+  article_author_id    integer  [not null, ref: > articles_authors.id]
   org_id               integer  [not null, ref: > organizations.org_id]
   num                  smallint [note: 'CHECK(num > 0)']
   affiliation_as_given varchar(500)
@@ -191,7 +191,7 @@ Table databases {
   quartile_prefix varchar(10)
 }
 
-Table journal_databases {
+Table journals_databases {
   id          serial   [pk, increment]
   journal_id  integer  [not null, ref: > journals.journal_id]
   db_id       integer  [not null, ref: > databases.db_id]
