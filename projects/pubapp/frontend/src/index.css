@@ -1,0 +1,51 @@
+:root {
+  --navy: #0f1b2d;
+  --navy-mid: #162032;
+  --navy-light: #1e2f47;
+  --amber: #e8a838;
+  --amber-dim: #c48a20;
+  --slate: #8ba0bc;
+  --slate-light: #b8cce0;
+  --surface: #f4f7fb;
+  --border: #d0dcea;
+  --text: #1a2638;
+  --text-muted: #5a7494;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--surface); color: var(--text); }
+
+/* Ant Design theme overrides */
+.ant-layout { background: var(--surface) !important; }
+/* Dark sidebar for nav; admin panel sider is exempt via .admin-sider class */
+.ant-menu-dark { background: var(--navy) !important; }
+.ant-layout-sider:not(.admin-sider) { background: var(--navy) !important; }
+.admin-sider { background: #f8fafc !important; }
+.admin-sider .ant-menu { background: transparent !important; color: #1a2638 !important; }
+.admin-sider .ant-menu-item { color: #1a2638 !important; overflow: hidden; }
+.admin-sider .ant-menu-item .ant-menu-title-content { overflow: hidden; }
+.admin-sider .ant-menu-item:hover { background: rgba(15,27,45,0.07) !important; }
+.admin-sider .ant-menu-item-selected { background: rgba(15,27,45,0.12) !important; color: #0f1b2d !important; }
+
+.stat-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+.stat-card .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--mono); }
+.stat-card .stat-value { font-size: 32px; font-weight: 600; color: var(--navy); line-height: 1.1; }
+.stat-card .stat-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.page-title { font-size: 22px; font-weight: 600; color: var(--navy); }
+.page-subtitle { font-size: 13px; color: var(--text-muted); font-family: var(--mono); }
+
+.filter-bar { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+
+.tag-q1 { background: #e6f4ea; color: #1e7e34; border: 1px solid #b7dfbf; font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.tag-q2 { background: #e8f4fd; color: #1565c0; border: 1px solid #b0d4f1; font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.tag-q3 { background: #fff8e1; color: #c17900; border: 1px solid #f0d892; font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.tag-q4 { background: #fce8e6; color: #c62828; border: 1px solid #f5b9b4; font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.tag-db  { background: #f0f0f0; color: #555; border: 1px solid #ddd; font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+
+.kbpr-value { font-family: var(--mono); font-size: 18px; font-weight: 600; color: var(--amber-dim); }
+
+.log-output { background: var(--navy); color: #a8d8a0; font-family: var(--mono); font-size: 12px; padding: 16px; border-radius: 6px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
