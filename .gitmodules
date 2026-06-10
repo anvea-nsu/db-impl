@@ -1,0 +1,4 @@
+[submodule "projects/pubapp"]
+	path = projects/pubapp
+	url = https://github.com/anvea-nsu/pubapp.git
+	branch = main
