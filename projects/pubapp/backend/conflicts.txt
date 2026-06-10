@@ -1,8 +1,0 @@
-Конфликты при импорте 2026-05-24 18:17:20.407788
-============================================================
-КОНФЛИКТ | 'AQUA WATER INFRASTRUCTURE, ECOSYSTEMS AND SOCIETY' | поле 'journal_titles[en]' | в БД: 'AQUA - WATER INFRASTRUCTURE ECOSYSTEMS AND SOCIETY' | в файле: 'AQUA WATER INFRASTRUCTURE, ECOSYSTEMS AND SOCIETY'
-КОНФЛИКТ | 'NURSING MANAGEMENT' | поле 'issn' | в БД: '1538-8670' | в файле: '2047-8976'
-КОНФЛИКТ | 'NURSING MANAGEMENT' | поле 'eissn' | в БД: '0744-6314' | в файле: '1354-5760'
-КОНФЛИКТ | 'RATIO JURIS' | поле 'issn' | в БД: '2619-4066' | в файле: '1467-9337'
-КОНФЛИКТ | 'RATIO JURIS' | поле 'eissn' | в БД: '1794-6638' | в файле: '0952-1917'
-КОНФЛИКТ | 'РОССИЙСКИЙ ПЕДИАТРИЧЕСКИЙ ЖУРНАЛ' | поле 'issn' | в БД: '2413-2918' | в файле: '2687-0843'
